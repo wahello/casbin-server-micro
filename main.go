@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate protoc -I proto --go_out=plugins=grpc:proto proto/casbin.proto
+//go:generate protoc -I proto --micro_out=proto --go_out=proto proto/casbin.proto
 
 package main
 
