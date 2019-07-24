@@ -19,7 +19,7 @@ package server
 import (
 	"testing"
 
-	"github.com/casbin/casbin/util"
+	"github.com/casbin/casbin/v2/util"
 	"github.com/stretchr/testify/assert"
 	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )

@@ -15,121 +15,39 @@
 package server
 
 import (
-	"errors"
-
 	"context"
 
-	"github.com/casbin/casbin"
-	"github.com/casbin/casbin/model"
-	"github.com/casbin/casbin/persist"
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	"github.com/casbin/casbin/v2/persist"
 	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 type Server struct {
-	enforcerMap map[int]*casbin.Enforcer
-	adapterMap  map[int]persist.Adapter
+	enf *casbin.Enforcer
 }
 
-func NewServer() *Server {
-	s := Server{}
-
-	s.enforcerMap = map[int]*casbin.Enforcer{}
-	s.adapterMap = map[int]persist.Adapter{}
-
-	return &s
-}
-
-func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
-	if _, ok := s.enforcerMap[handle]; ok {
-		return s.enforcerMap[handle], nil
-	} else {
-		return nil, errors.New("enforcer not found")
-	}
-}
-
-func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
-	if _, ok := s.adapterMap[handle]; ok {
-		return s.adapterMap[handle], nil
-	} else {
-		return nil, errors.New("adapter not found")
-	}
-}
-
-func (s *Server) addEnforcer(enf *casbin.Enforcer) int {
-	cnt := len(s.enforcerMap)
-	s.enforcerMap[cnt] = enf
-	return cnt
-}
-
-func (s *Server) addAdapter(a persist.Adapter) int {
-	cnt := len(s.adapterMap)
-	s.adapterMap[cnt] = a
-	return cnt
-}
-
-func (s *Server) NewEnforcer(ctx context.Context, req *casbinpb.NewEnforcerRequest, rsp *casbinpb.NewEnforcerReply) error {
-	var a persist.Adapter
-	var enf *casbin.Enforcer
-	var err error
-
-	if req.AdapterHandle != -1 {
-		a, err = s.getAdapter(int(req.AdapterHandle))
-		if err != nil {
-			return err
-		}
-	}
-
-	m, err := model.NewModelFromString(req.ModelText)
+func NewServer(m model.Model, a persist.Adapter) (*Server, error) {
+	enf, err := casbin.NewEnforcer(m, a)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if a == nil {
-		enf, err = casbin.NewEnforcer(m)
-	} else {
-		enf, err = casbin.NewEnforcer(m, a)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	h := s.addEnforcer(enf)
-
-	rsp.Handler = int32(h)
-
-	return nil
-}
-
-func (s *Server) NewAdapter(ctx context.Context, req *casbinpb.NewAdapterRequest, rsp *casbinpb.NewAdapterReply) error {
-	a, err := newAdapter(req)
-	if err != nil {
-		return err
-	}
-
-	h := s.addAdapter(a)
-
-	rsp.Handler = int32(h)
-
-	return nil
+	s := &Server{enf: enf}
+	return s, nil
 }
 
 func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp *casbinpb.BoolReply) error {
-	enf, err := s.getEnforcer(int(req.EnforcerHandler))
-	if err != nil {
-		return err
-	}
-
 	params := make([]interface{}, 0, len(req.Params))
 
-	m := enf.GetModel()["m"]["m"]
+	m := s.enf.GetModel()["m"]["m"]
 	sourceValue := m.Value
 
 	for index := range req.Params {
 		params = append(params, parseAbacParam(req.Params[index], m))
 	}
 
-	res, err := enf.Enforce(params...)
+	res, err := s.enf.Enforce(params...)
 	if err != nil {
 		return err
 	}
@@ -141,27 +59,9 @@ func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp 
 }
 
 func (s *Server) LoadPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.EmptyReply) error {
-	enf, err := s.getEnforcer(int(req.Handler))
-	if err != nil {
-		return err
-	}
-
-	if err = enf.LoadPolicy(); err != nil {
-		return err
-	}
-
-	return nil
+	return s.enf.LoadPolicy()
 }
 
 func (s *Server) SavePolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.EmptyReply) error {
-	enf, err := s.getEnforcer(int(req.Handler))
-	if err != nil {
-		return err
-	}
-
-	if err = enf.SavePolicy(); err != nil {
-		return err
-	}
-
-	return nil
+	return s.enf.SavePolicy()
 }

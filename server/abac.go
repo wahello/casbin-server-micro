@@ -21,7 +21,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/casbin/casbin/model"
+	"github.com/casbin/casbin/v2/model"
 )
 
 type AbacAttrList struct {
