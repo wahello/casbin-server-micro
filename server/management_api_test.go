@@ -1,3 +1,5 @@
+// +build ignore
+
 // Copyright 2018 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +19,9 @@ package server
 import (
 	"testing"
 
-	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/util"
 	"github.com/stretchr/testify/assert"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 func testStringList(t *testing.T, title string, f func() []string, res []string) {
@@ -32,7 +34,7 @@ func testStringList(t *testing.T, title string, f func() []string, res []string)
 	}
 }
 
-func extractFromArrayReply(reply *pb.ArrayReply) func() []string {
+func extractFromArrayReply(reply *casbinpb.ArrayReply) func() []string {
 	return func() []string {
 		return reply.Array
 	}
@@ -41,32 +43,32 @@ func extractFromArrayReply(reply *pb.ArrayReply) func() []string {
 func TestGetList(t *testing.T) {
 	e := newTestEngine(t, "file", "../examples/rbac_policy.csv", "../examples/rbac_model.conf")
 
-	subjects, err := e.s.GetAllSubjects(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	subjects, err := e.s.GetAllSubjects(e.ctx, &casbinpb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
 	testStringList(t, "Subjects", extractFromArrayReply(subjects), []string{"alice", "bob", "data2_admin"})
 
-	objects, err := e.s.GetAllObjects(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	objects, err := e.s.GetAllObjects(e.ctx, &casbinpb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
 	testStringList(t, "Objects", extractFromArrayReply(objects), []string{"data1", "data2"})
 
-	actions, err := e.s.GetAllActions(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	actions, err := e.s.GetAllActions(e.ctx, &casbinpb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
 	testStringList(t, "Actions", extractFromArrayReply(actions), []string{"read", "write"})
 
-	roles, err := e.s.GetAllRoles(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	roles, err := e.s.GetAllRoles(e.ctx, &casbinpb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
 	testStringList(t, "Roles", extractFromArrayReply(roles), []string{"data2_admin"})
 }
 
-func extractFromArray2DReply(reply *pb.Array2DReply) [][]string {
+func extractFromArray2DReply(reply *casbinpb.Array2DReply) [][]string {
 	array2d := make([][]string, len(reply.D2))
 	for i := 0; i < len(reply.D2); i++ {
 		array2d[i] = reply.D2[i].D1
@@ -77,7 +79,7 @@ func extractFromArray2DReply(reply *pb.Array2DReply) [][]string {
 
 func testGetPolicy(t *testing.T, e *testEngine, res [][]string) {
 	t.Helper()
-	req := &pb.EmptyRequest{Handler: e.h}
+	req := &casbinpb.EmptyRequest{Handler: e.h}
 	reply, err := e.s.GetPolicy(e.ctx, req)
 	assert.NoError(t, err)
 
@@ -91,7 +93,7 @@ func testGetPolicy(t *testing.T, e *testEngine, res [][]string) {
 
 func testGetFilteredPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]string, fieldValues ...string) {
 	t.Helper()
-	req := &pb.FilteredPolicyRequest{
+	req := &casbinpb.FilteredPolicyRequest{
 		EnforcerHandler: e.h, FieldIndex: int32(fieldIndex), FieldValues: fieldValues}
 	reply, err := e.s.GetFilteredPolicy(e.ctx, req)
 	assert.NoError(t, err)
@@ -106,7 +108,7 @@ func testGetFilteredPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]
 
 func testGetGroupingPolicy(t *testing.T, e *testEngine, res [][]string) {
 	t.Helper()
-	req := &pb.EmptyRequest{Handler: e.h}
+	req := &casbinpb.EmptyRequest{Handler: e.h}
 	reply, err := e.s.GetGroupingPolicy(e.ctx, req)
 	assert.NoError(t, err)
 
@@ -120,7 +122,7 @@ func testGetGroupingPolicy(t *testing.T, e *testEngine, res [][]string) {
 
 func testGetFilteredGroupingPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]string, fieldValues ...string) {
 	t.Helper()
-	req := &pb.FilteredPolicyRequest{
+	req := &casbinpb.FilteredPolicyRequest{
 		EnforcerHandler: e.h, FieldIndex: int32(fieldIndex), FieldValues: fieldValues}
 	reply, err := e.s.GetFilteredGroupingPolicy(e.ctx, req)
 	assert.NoError(t, err)
@@ -135,7 +137,7 @@ func testGetFilteredGroupingPolicy(t *testing.T, e *testEngine, fieldIndex int, 
 
 func testHasPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
 	t.Helper()
-	req := &pb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: policy}
+	req := &casbinpb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: policy}
 	reply, err := e.s.HasPolicy(e.ctx, req)
 	assert.NoError(t, err)
 
@@ -149,7 +151,7 @@ func testHasPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
 
 func testHasGroupingPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
 	t.Helper()
-	req := &pb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: policy}
+	req := &casbinpb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: policy}
 	reply, err := e.s.HasNamedGroupingPolicy(e.ctx, req)
 	assert.NoError(t, err)
 
@@ -214,22 +216,22 @@ func TestModifyPolicyAPI(t *testing.T) {
 		{"data2_admin", "data2", "read"},
 		{"data2_admin", "data2", "write"}})
 
-	_, err := e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data1", "read"}})
+	_, err := e.s.RemovePolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data1", "read"}})
 	assert.NoError(t, err)
-	_, err = e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"bob", "data2", "write"}})
+	_, err = e.s.RemovePolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"bob", "data2", "write"}})
 	assert.NoError(t, err)
-	_, err = e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data1", "read"}})
+	_, err = e.s.RemovePolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data1", "read"}})
 	assert.NoError(t, err)
 
-	_, err = e.s.AddPolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"eve", "data3", "read"}})
+	_, err = e.s.AddPolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"eve", "data3", "read"}})
 	assert.NoError(t, err)
-	_, err = e.s.AddPolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"eve", "data3", "read"}})
+	_, err = e.s.AddPolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"eve", "data3", "read"}})
 	assert.NoError(t, err)
 
 	namedPolicy := []string{"eve", "data3", "read"}
-	_, err = e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: namedPolicy})
+	_, err = e.s.RemovePolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: namedPolicy})
 	assert.NoError(t, err)
-	_, err = e.s.AddNamedPolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: namedPolicy})
+	_, err = e.s.AddNamedPolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: namedPolicy})
 	assert.NoError(t, err)
 
 	testGetPolicy(t, e, [][]string{
@@ -237,7 +239,7 @@ func TestModifyPolicyAPI(t *testing.T) {
 		{"data2_admin", "data2", "write"},
 		{"eve", "data3", "read"}})
 
-	_, err = e.s.RemoveFilteredPolicy(e.ctx, &pb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 1, FieldValues: []string{"data2"}})
+	_, err = e.s.RemoveFilteredPolicy(e.ctx, &casbinpb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 1, FieldValues: []string{"data2"}})
 	assert.NoError(t, err)
 
 	testGetPolicy(t, e, [][]string{{"eve", "data3", "read"}})
@@ -252,26 +254,26 @@ func TestModifyGroupingPolicyAPI(t *testing.T) {
 	testGetRoles(t, e, "non_exist", []string{})
 
 	_, err := e.s.RemoveGroupingPolicy(e.ctx,
-		&pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data2_admin"}})
+		&*casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data2_admin"}})
 	assert.NoError(t, err)
 
-	_, err = e.s.AddGroupingPolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"bob", "data1_admin"}})
+	_, err = e.s.AddGroupingPolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"bob", "data1_admin"}})
 	assert.NoError(t, err)
 
-	_, err = e.s.AddGroupingPolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"eve", "data3_admin"}})
+	_, err = e.s.AddGroupingPolicy(e.ctx, &casbinpb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"eve", "data3_admin"}})
 	assert.NoError(t, err)
 
 	namedGroupingPolicy := []string{"alice", "data2_admin"}
 	testGetRoles(t, e, "alice", []string{})
 
 	_, err = e.s.AddNamedGroupingPolicy(e.ctx,
-		&pb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: namedGroupingPolicy})
+		&casbinpb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: namedGroupingPolicy})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{"data2_admin"})
 
 	_, err = e.s.RemoveNamedGroupingPolicy(e.ctx,
-		&pb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: namedGroupingPolicy})
+		&casbinpb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: namedGroupingPolicy})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{})
@@ -284,7 +286,7 @@ func TestModifyGroupingPolicyAPI(t *testing.T) {
 	testGetUsers(t, e, "data3_admin", []string{"eve"})
 
 	_, err = e.s.RemoveFilteredGroupingPolicy(e.ctx,
-		&pb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 0, FieldValues: []string{"bob"}})
+		&casbinpb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 0, FieldValues: []string{"bob"}})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{})

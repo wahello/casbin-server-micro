@@ -16,173 +16,258 @@ package server
 
 import (
 	"context"
-	pb "github.com/casbin/casbin-server/proto"
+	"fmt"
+
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 // GetRolesForUser gets the roles that a user has.
-func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) GetRolesForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.ArrayReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.ArrayReply{}, err
+		return err
 	}
 
-	res, _ := e.GetModel()["g"]["g"].RM.GetRoles(in.User)
+	res, err := enf.GetModel()["g"]["g"].RM.GetRoles(req.User)
+	if err != nil {
+		return err
+	}
 
-	return &pb.ArrayReply{Array: res}, nil
+	rsp.Array = res
+
+	return nil
 }
 
 // GetUsersForRole gets the users that has a role.
-func (s *Server) GetUsersForRole(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) GetUsersForRole(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.ArrayReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.ArrayReply{}, err
+		return err
 	}
 
-	res, _ := e.GetModel()["g"]["g"].RM.GetUsers(in.User)
+	res, err := enf.GetModel()["g"]["g"].RM.GetUsers(req.User)
+	if err != nil {
+		return err
+	}
 
-	return &pb.ArrayReply{Array: res}, nil
+	rsp.Array = res
+	return nil
 }
 
 // HasRoleForUser determines whether a user has a role.
-func (s *Server) HasRoleForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) HasRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	roles, err := e.GetRolesForUser(in.User)
+	roles, err := enf.GetRolesForUser(req.User)
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
 	for _, r := range roles {
-		if r == in.Role {
-			return &pb.BoolReply{Res: true}, nil
+		if r == req.Role {
+			rsp.Res = true
+			break
 		}
 	}
 
-	return &pb.BoolReply{}, nil
+	return nil
 }
 
 // AddRoleForUser adds a role for a user.
 // Returns false if the user already has the role (aka not affected).
-func (s *Server) AddRoleForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) AddRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.AddGroupingPolicy(in.User, in.Role)}, nil
+	res, err := enf.AddGroupingPolicy(req.User, req.Role)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // DeleteRoleForUser deletes a role for a user.
 // Returns false if the user does not have the role (aka not affected).
-func (s *Server) DeleteRoleForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeleteRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveGroupingPolicy(in.User, in.Role)}, nil
+	res, err := enf.RemoveGroupingPolicy(req.User, req.Role)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // DeleteRolesForUser deletes all roles for a user.
 // Returns false if the user does not have any roles (aka not affected).
-func (s *Server) DeleteRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeleteRolesForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredGroupingPolicy(0, in.User)}, nil
+	res, err := enf.RemoveFilteredGroupingPolicy(0, req.User)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // DeleteUser deletes a user.
 // Returns false if the user does not exist (aka not affected).
-func (s *Server) DeleteUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeleteUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredGroupingPolicy(0, in.User)}, nil
+	res, err := enf.RemoveFilteredGroupingPolicy(0, req.User)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // DeleteRole deletes a role.
-func (s *Server) DeleteRole(ctx context.Context, in *pb.UserRoleRequest) (*pb.EmptyReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeleteRole(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.EmptyReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.EmptyReply{}, err
+		return err
 	}
 
-	e.RemoveFilteredGroupingPolicy(1, in.Role)
-	e.RemoveFilteredPolicy(0, in.Role)
+	res, err := enf.RemoveFilteredGroupingPolicy(1, req.Role)
+	if err != nil {
+		return err
+	} else if !res {
+		return fmt.Errorf("casbin unable to remove filtered group policy %v", req.Role)
+	}
 
-	return &pb.EmptyReply{}, nil
+	res, err = enf.RemoveFilteredPolicy(0, req.Role)
+	if err != nil {
+		return err
+	} else if !res {
+		return fmt.Errorf("casbin unable to remove filtered policy %v", req.Role)
+	}
+
+	return nil
 }
 
 // DeletePermission deletes a permission.
 // Returns false if the permission does not exist (aka not affected).
-func (s *Server) DeletePermission(ctx context.Context, in *pb.PermissionRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeletePermission(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredPolicy(1, in.Permissions...)}, nil
+	res, err := enf.RemoveFilteredPolicy(1, req.Permissions...)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // AddPermissionForUser adds a permission for a user or role.
 // Returns false if the user or role already has the permission (aka not affected).
-func (s *Server) AddPermissionForUser(ctx context.Context, in *pb.PermissionRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) AddPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.AddPolicy(s.convertPermissions(in.User, in.Permissions...)...)}, nil
+	res, err := enf.AddPolicy(s.convertPermissions(req.User, req.Permissions...)...)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // DeletePermissionForUser deletes a permission for a user or role.
 // Returns false if the user or role does not have the permission (aka not affected).
-func (s *Server) DeletePermissionForUser(ctx context.Context, in *pb.PermissionRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeletePermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.RemovePolicy(s.convertPermissions(in.User, in.Permissions...)...)}, nil
+	res, err := enf.RemovePolicy(s.convertPermissions(req.User, req.Permissions...)...)
+	if err != nil {
+		return err
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // DeletePermissionsForUser deletes permissions for a user or role.
 // Returns false if the user or role does not have any permissions (aka not affected).
-func (s *Server) DeletePermissionsForUser(ctx context.Context, in *pb.PermissionRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) DeletePermissionsForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredPolicy(0, in.User)}, nil
+	res, err := enf.RemoveFilteredPolicy(0, req.User)
+	if err != nil {
+		return err
+	} else if !res {
+		return fmt.Errorf("casbin unable to remove filtered policy %v", req.User)
+	}
+
+	rsp.Res = res
+
+	return nil
 }
 
 // GetPermissionsForUser gets permissions for a user or role.
-func (s *Server) GetPermissionsForUser(ctx context.Context, in *pb.PermissionRequest) (*pb.Array2DReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) GetPermissionsForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.Array2DReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.Array2DReply{}, err
+		return err
 	}
 
-	return s.wrapPlainPolicy(e.GetFilteredPolicy(0, in.User)), nil
+	rsp = s.wrapPlainPolicy(enf.GetFilteredPolicy(0, req.User))
+
+	return nil
 }
 
 // HasPermissionForUser determines whether a user has a permission.
-func (s *Server) HasPermissionForUser(ctx context.Context, in *pb.PermissionRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) HasPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{}, err
+		return err
 	}
 
-	return &pb.BoolReply{Res: e.HasPolicy(s.convertPermissions(in.User, in.Permissions...)...)}, nil
+	rsp.Res = enf.HasPolicy(s.convertPermissions(req.User, req.Permissions...)...)
+
+	return nil
 }
 
 func (s *Server) convertPermissions(user string, permissions ...string) []interface{} {

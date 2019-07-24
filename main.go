@@ -12,34 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate protoc -I proto --micro_out=proto --go_out=proto proto/casbin.proto
+//go:generate protoc -I proto --micro_out=casbinpb --go_out=casbinpb casbinpb/casbin.proto
 
 package main
 
 import (
 	"log"
-	"net"
+	"net/http"
+	"os"
 
-	pb "github.com/casbin/casbin-server/proto"
-	"github.com/casbin/casbin-server/server"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-)
-
-const (
-	port = ":50051"
+	metrics "github.com/ProtocolONE/go-micro-plugins/wrapper/monitoring/prometheus"
+	micro "github.com/micro/go-micro"
+	"github.com/micro/go-micro/client/selector/static"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	options := []micro.Option{
+		micro.Name("casbin"),
+		micro.Version("0.0.1"),
+		micro.WrapHandler(metrics.NewHandlerWrapper()),
+		micro.AfterStop(func() error {
+			app.logger.Info("Micro service stopped")
+			app.Stop()
+			return nil
+		}),
+	}
+
+	if os.Getenv("MICRO_SELECTOR") == "static" {
+		log.Println("Use micro selector `static`")
+		options = append(options, micro.Selector(static.NewSelector()))
+	}
+
+	app.logger.Info("Initialize micro service")
+
+	app.service = micro.NewService(options...)
+
+	if err := app.svc.Init(); err != nil {
+		app.logger.Fatal("Create service instance failed", zap.Error(err))
+	}
+
+	err = casbinpb.RegisterCasbinHandler(app.service.Server(), app.svc)
+
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		app.logger.Fatal("Service init failed", zap.Error(err))
 	}
-	s := grpc.NewServer()
-	pb.RegisterCasbinServer(s, server.NewServer())
-	// Register reflection service on gRPC server.
-	reflection.Register(s)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+
+	app.router = http.NewServeMux()
+	app.initHealth()
+	app.initMetrics()
 }

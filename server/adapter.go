@@ -17,34 +17,32 @@ package server
 import (
 	"errors"
 
-	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
-	"github.com/casbin/casbin/persist/file-adapter"
-	"github.com/casbin/gorm-adapter"
+	gormadapter "github.com/casbin/gorm-adapter"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+
 	//_ "github.com/jinzhu/gorm/dialects/mssql"
 	//_ "github.com/jinzhu/gorm/dialects/mysql"
-	//_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-var errDriverName = errors.New("currently supported DriverName: file | mysql | postgres | mssql")
+var errDriverName = errors.New("currently supported DriverName: mysql | postgres | mssql")
 
-func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
+func newAdapter(req *casbinpb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
-	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql"}
+	supportDriverNames := [...]string{"mysql", "postgres", "mssql"}
 
-	switch in.DriverName {
-	case "file":
-		a = fileadapter.NewAdapter(in.ConnectString)
+	switch req.DriverName {
 	default:
 		var support = false
 		for _, driverName := range supportDriverNames {
-			if driverName == in.DriverName {
+			if driverName == req.DriverName {
 				support = true
 				break
 			}
 		}
 		if support {
-			a = gormadapter.NewAdapter(in.DriverName, in.ConnectString, in.DbSpecified)
+			a = gormadapter.NewAdapter(req.DriverName, req.ConnectString, req.DbSpecified)
 			break
 		}
 		return nil, errDriverName

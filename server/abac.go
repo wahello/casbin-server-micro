@@ -107,7 +107,7 @@ func parseAbacParam(param string, m *model.Assertion) interface{} {
 		for k, v := range attrList.nameMap {
 			old := "." + k
 			if strings.Contains(m.Value, old) {
-				m.Value = strings.Replace(m.Value, old, "." + v, -1)
+				m.Value = strings.Replace(m.Value, old, "."+v, -1)
 			}
 		}
 

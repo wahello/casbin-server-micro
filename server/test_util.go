@@ -1,3 +1,5 @@
+// +build ignore
+
 // Copyright 2018 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +21,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	pb "github.com/casbin/casbin-server/proto"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 type testEngine struct {
@@ -32,7 +34,7 @@ func newTestEngine(t *testing.T, from, connectStr string, modelLoc string) *test
 	s := NewServer()
 	ctx := context.Background()
 
-	_, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: from, ConnectString: connectStr})
+	_, err := s.NewAdapter(ctx, &casbinpb.NewAdapterRequest{DriverName: from, ConnectString: connectStr})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +44,7 @@ func newTestEngine(t *testing.T, from, connectStr string, modelLoc string) *test
 		t.Fatal(err)
 	}
 
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
+	resp, err := s.NewEnforcer(ctx, &casbinpb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
 	if err != nil {
 		t.Fatal(err)
 	}

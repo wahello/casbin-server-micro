@@ -1,3 +1,5 @@
+// +build ignore
+
 // Copyright 2018 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,13 +21,14 @@ import (
 	"testing"
 
 	"context"
-	pb "github.com/casbin/casbin-server/proto"
+
 	"github.com/stretchr/testify/assert"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 func testEnforce(t *testing.T, e *testEngine, sub string, obj string, act string, res bool) {
 	t.Helper()
-	reply, err := e.s.Enforce(e.ctx, &pb.EnforceRequest{EnforcerHandler: e.h, Params: []string{sub, obj, act}})
+	reply, err := e.s.Enforce(e.ctx, &casbinpb.EnforceRequest{EnforcerHandler: e.h, Params: []string{sub, obj, act}})
 	assert.NoError(t, err)
 
 	if reply.Res != res {
@@ -35,7 +38,7 @@ func testEnforce(t *testing.T, e *testEngine, sub string, obj string, act string
 
 func testEnforceWithoutUsers(t *testing.T, e *testEngine, obj string, act string, res bool) {
 	t.Helper()
-	reply, err := e.s.Enforce(e.ctx, &pb.EnforceRequest{EnforcerHandler: e.h, Params: []string{obj, act}})
+	reply, err := e.s.Enforce(e.ctx, &casbinpb.EnforceRequest{EnforcerHandler: e.h, Params: []string{obj, act}})
 	assert.NoError(t, err)
 
 	if reply.Res != res {
@@ -47,7 +50,7 @@ func TestRBACModel(t *testing.T) {
 	s := NewServer()
 	ctx := context.Background()
 
-	_, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
+	_, err := s.NewAdapter(ctx, &casbinpb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -57,7 +60,7 @@ func TestRBACModel(t *testing.T) {
 		t.Error(err)
 	}
 
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
+	resp, err := s.NewEnforcer(ctx, &casbinpb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
 	if err != nil {
 		t.Error(err)
 	}
@@ -68,7 +71,7 @@ func TestRBACModel(t *testing.T) {
 	act := "read"
 	res := true
 
-	resp2, err := s.Enforce(ctx, &pb.EnforceRequest{EnforcerHandler: e, Params: []string{sub, obj, act}})
+	resp2, err := s.Enforce(ctx, &casbinpb.EnforceRequest{EnforcerHandler: e, Params: []string{sub, obj, act}})
 	if err != nil {
 		t.Error(err)
 	}
@@ -88,7 +91,7 @@ func TestABACModel(t *testing.T) {
 		t.Error(err)
 	}
 
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: -1})
+	resp, err := s.NewEnforcer(ctx, &casbinpb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: -1})
 	if err != nil {
 		t.Error(err)
 	}
@@ -98,8 +101,8 @@ func TestABACModel(t *testing.T) {
 	}
 	e := resp.Handler
 
-	data1, _ := MakeABAC(ABACModel{Name:"data1",Owner:"alice"})
-	data2, _ := MakeABAC(ABACModel{Name:"data2",Owner:"bob"})
+	data1, _ := MakeABAC(ABACModel{Name: "data1", Owner: "alice"})
+	data2, _ := MakeABAC(ABACModel{Name: "data2", Owner: "bob"})
 
 	testModel(t, s, e, "alice", data1, "read", true)
 	testModel(t, s, e, "alice", data1, "write", true)
@@ -115,7 +118,7 @@ func TestABACModel(t *testing.T) {
 func testModel(t *testing.T, s *Server, enforcerHandler int32, sub string, obj string, act string, res bool) {
 	t.Helper()
 
-	reply, err := s.Enforce(nil, &pb.EnforceRequest{EnforcerHandler: enforcerHandler, Params: []string{sub, obj, act}})
+	reply, err := s.Enforce(nil, &casbinpb.EnforceRequest{EnforcerHandler: enforcerHandler, Params: []string{sub, obj, act}})
 	assert.NoError(t, err)
 
 	if reply.Res != res {

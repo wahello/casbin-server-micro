@@ -18,12 +18,13 @@ import (
 	"errors"
 
 	"context"
+
 	"github.com/casbin/casbin"
-	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin/model"
 	"github.com/casbin/casbin/persist"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
-// Server is used to implement proto.CasbinServer.
 type Server struct {
 	enforcerMap map[int]*casbin.Enforcer
 	adapterMap  map[int]persist.Adapter
@@ -54,9 +55,9 @@ func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
 	}
 }
 
-func (s *Server) addEnforcer(e *casbin.Enforcer) int {
+func (s *Server) addEnforcer(enf *casbin.Enforcer) int {
 	cnt := len(s.enforcerMap)
-	s.enforcerMap[cnt] = e
+	s.enforcerMap[cnt] = enf
 	return cnt
 }
 
@@ -66,80 +67,101 @@ func (s *Server) addAdapter(a persist.Adapter) int {
 	return cnt
 }
 
-func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
+func (s *Server) NewEnforcer(ctx context.Context, req *casbinpb.NewEnforcerRequest, rsp *casbinpb.NewEnforcerReply) error {
 	var a persist.Adapter
-	var e *casbin.Enforcer
+	var enf *casbin.Enforcer
+	var err error
 
-	if in.AdapterHandle != -1 {
-		var err error
-		a, err = s.getAdapter(int(in.AdapterHandle))
+	if req.AdapterHandle != -1 {
+		a, err = s.getAdapter(int(req.AdapterHandle))
 		if err != nil {
-			return &pb.NewEnforcerReply{Handler: 0}, err
+			return err
 		}
 	}
 
-	if a == nil {
-		e = casbin.NewEnforcer(casbin.NewModel(in.ModelText))
-	} else {
-		e = casbin.NewEnforcer(casbin.NewModel(in.ModelText), a)
+	m, err := model.NewModelFromString(req.ModelText)
+	if err != nil {
+		return err
 	}
-	h := s.addEnforcer(e)
 
-	return &pb.NewEnforcerReply{Handler: int32(h)}, nil
+	if a == nil {
+		enf, err = casbin.NewEnforcer(m)
+	} else {
+		enf, err = casbin.NewEnforcer(m, a)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	h := s.addEnforcer(enf)
+
+	rsp.Handler = int32(h)
+
+	return nil
 }
 
-func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.NewAdapterReply, error) {
-	a, err := newAdapter(in)
+func (s *Server) NewAdapter(ctx context.Context, req *casbinpb.NewAdapterRequest, rsp *casbinpb.NewAdapterReply) error {
+	a, err := newAdapter(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	h := s.addAdapter(a)
 
-	return &pb.NewAdapterReply{Handler: int32(h)}, nil
+	rsp.Handler = int32(h)
+
+	return nil
 }
 
-func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
+func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp *casbinpb.BoolReply) error {
+	enf, err := s.getEnforcer(int(req.EnforcerHandler))
 	if err != nil {
-		return &pb.BoolReply{Res: false}, err
+		return err
 	}
 
-	params := make([]interface{}, 0, len(in.Params))
+	params := make([]interface{}, 0, len(req.Params))
 
-	m := e.GetModel()["m"]["m"]
+	m := enf.GetModel()["m"]["m"]
 	sourceValue := m.Value
 
-	for index := range in.Params {
-		param := parseAbacParam(in.Params[index], m)
-		params = append(params, param)
+	for index := range req.Params {
+		params = append(params, parseAbacParam(req.Params[index], m))
 	}
 
-	res := e.Enforce(params...)
+	res, err := enf.Enforce(params...)
+	if err != nil {
+		return err
+	}
 
+	rsp.Res = res
 	m.Value = sourceValue
 
-	return &pb.BoolReply{Res: res}, nil
+	return nil
 }
 
-func (s *Server) LoadPolicy(ctx context.Context, in *pb.EmptyRequest) (*pb.EmptyReply, error) {
-	e, err := s.getEnforcer(int(in.Handler))
+func (s *Server) LoadPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.EmptyReply) error {
+	enf, err := s.getEnforcer(int(req.Handler))
 	if err != nil {
-		return &pb.EmptyReply{}, err
+		return err
 	}
 
-	err = e.LoadPolicy()
+	if err = enf.LoadPolicy(); err != nil {
+		return err
+	}
 
-	return &pb.EmptyReply{}, err
+	return nil
 }
 
-func (s *Server) SavePolicy(ctx context.Context, in *pb.EmptyRequest) (*pb.EmptyReply, error) {
-	e, err := s.getEnforcer(int(in.Handler))
+func (s *Server) SavePolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.EmptyReply) error {
+	enf, err := s.getEnforcer(int(req.Handler))
 	if err != nil {
-		return &pb.EmptyReply{}, err
+		return err
 	}
 
-	err = e.SavePolicy()
+	if err = enf.SavePolicy(); err != nil {
+		return err
+	}
 
-	return &pb.EmptyReply{}, err
+	return nil
 }

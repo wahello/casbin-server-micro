@@ -15,15 +15,16 @@
 package server
 
 import (
-	pb "github.com/casbin/casbin-server/proto"
-	"github.com/casbin/casbin/util"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/casbin/casbin/v2/util"
+	"github.com/stretchr/testify/assert"
+	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
 )
 
 func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {
 	t.Helper()
-	reply, err := e.s.GetRolesForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
+	reply, err := e.s.GetRolesForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: name})
 	assert.NoError(t, err)
 
 	t.Log("Roles for ", name, ": ", reply.Array)
@@ -35,7 +36,7 @@ func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {
 
 func testGetUsers(t *testing.T, e *testEngine, name string, res []string) {
 	t.Helper()
-	reply, err := e.s.GetUsersForRole(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
+	reply, err := e.s.GetUsersForRole(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: name})
 	assert.NoError(t, err)
 
 	t.Log("Users for ", name, ": ", reply.Array)
@@ -47,7 +48,7 @@ func testGetUsers(t *testing.T, e *testEngine, name string, res []string) {
 
 func testHasRole(t *testing.T, e *testEngine, name string, role string, res bool) {
 	t.Helper()
-	reply, err := e.s.HasRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name, Role: role})
+	reply, err := e.s.HasRoleForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: name, Role: role})
 	assert.NoError(t, err)
 
 	t.Log(name, " has role ", role, ": ", reply.Res)
@@ -68,38 +69,38 @@ func TestRoleAPI(t *testing.T) {
 	testHasRole(t, e, "alice", "data1_admin", false)
 	testHasRole(t, e, "alice", "data2_admin", true)
 
-	_, err := e.s.AddRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
+	_, err := e.s.AddRoleForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{"data1_admin", "data2_admin"})
 	testGetRoles(t, e, "bob", []string{})
 	testGetRoles(t, e, "data2_admin", []string{})
 
-	_, err = e.s.DeleteRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
+	_, err = e.s.DeleteRoleForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{"data2_admin"})
 	testGetRoles(t, e, "bob", []string{})
 	testGetRoles(t, e, "data2_admin", []string{})
 
-	_, err = e.s.DeleteRolesForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
+	_, err = e.s.DeleteRolesForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{})
 	testGetRoles(t, e, "bob", []string{})
 	testGetRoles(t, e, "data2_admin", []string{})
 
-	_, err = e.s.AddRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
+	_, err = e.s.AddRoleForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
 	assert.NoError(t, err)
 
-	_, err = e.s.DeleteUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
+	_, err = e.s.DeleteUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
 	assert.NoError(t, err)
 
 	testGetRoles(t, e, "alice", []string{})
 	testGetRoles(t, e, "bob", []string{})
 	testGetRoles(t, e, "data2_admin", []string{})
 
-	_, err = e.s.AddRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data2_admin"})
+	_, err = e.s.AddRoleForUser(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data2_admin"})
 	assert.NoError(t, err)
 
 	testEnforce(t, e, "alice", "data1", "read", true)
@@ -111,7 +112,7 @@ func TestRoleAPI(t *testing.T) {
 	testEnforce(t, e, "bob", "data2", "read", false)
 	testEnforce(t, e, "bob", "data2", "write", true)
 
-	_, err = e.s.DeleteRole(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, Role: "data2_admin"})
+	_, err = e.s.DeleteRole(e.ctx, &casbinpb.UserRoleRequest{EnforcerHandler: e.h, Role: "data2_admin"})
 	assert.NoError(t, err)
 
 	testEnforce(t, e, "alice", "data1", "read", true)
@@ -126,7 +127,7 @@ func TestRoleAPI(t *testing.T) {
 
 func testGetPermissions(t *testing.T, e *testEngine, name string, res [][]string) {
 	t.Helper()
-	reply, err := e.s.GetPermissionsForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: name})
+	reply, err := e.s.GetPermissionsForUser(e.ctx, &casbinpb.PermissionRequest{EnforcerHandler: e.h, User: name})
 	assert.NoError(t, err)
 
 	myRes := extractFromArray2DReply(reply)
@@ -139,7 +140,7 @@ func testGetPermissions(t *testing.T, e *testEngine, name string, res [][]string
 
 func testHasPermission(t *testing.T, e *testEngine, name string, permission []string, res bool) {
 	t.Helper()
-	reply, err := e.s.HasPermissionForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: name, Permissions: permission})
+	reply, err := e.s.HasPermissionForUser(e.ctx, &casbinpb.PermissionRequest{EnforcerHandler: e.h, User: name, Permissions: permission})
 	assert.NoError(t, err)
 
 	t.Log(name, " has permission ", util.ArrayToString(permission), ": ", reply.Res)
@@ -166,7 +167,7 @@ func TestPermissionAPI(t *testing.T) {
 	testHasPermission(t, e, "bob", []string{"read"}, false)
 	testHasPermission(t, e, "bob", []string{"write"}, true)
 
-	_, err := e.s.DeletePermission(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, Permissions: []string{"read"}})
+	_, err := e.s.DeletePermission(e.ctx, &casbinpb.PermissionRequest{EnforcerHandler: e.h, Permissions: []string{"read"}})
 	assert.NoError(t, err)
 
 	testEnforceWithoutUsers(t, e, "alice", "read", false)
@@ -174,7 +175,7 @@ func TestPermissionAPI(t *testing.T) {
 	testEnforceWithoutUsers(t, e, "bob", "read", false)
 	testEnforceWithoutUsers(t, e, "bob", "write", true)
 
-	_, err = e.s.AddPermissionForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: "bob", Permissions: []string{"read"}})
+	_, err = e.s.AddPermissionForUser(e.ctx, &casbinpb.PermissionRequest{EnforcerHandler: e.h, User: "bob", Permissions: []string{"read"}})
 	assert.NoError(t, err)
 
 	testEnforceWithoutUsers(t, e, "alice", "read", false)
@@ -182,7 +183,7 @@ func TestPermissionAPI(t *testing.T) {
 	testEnforceWithoutUsers(t, e, "bob", "read", true)
 	testEnforceWithoutUsers(t, e, "bob", "write", true)
 
-	_, err = e.s.DeletePermissionForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: "bob", Permissions: []string{"read"}})
+	_, err = e.s.DeletePermissionForUser(e.ctx, &casbinpb.PermissionRequest{EnforcerHandler: e.h, User: "bob", Permissions: []string{"read"}})
 	assert.NoError(t, err)
 
 	testEnforceWithoutUsers(t, e, "alice", "read", false)
@@ -190,7 +191,7 @@ func TestPermissionAPI(t *testing.T) {
 	testEnforceWithoutUsers(t, e, "bob", "read", false)
 	testEnforceWithoutUsers(t, e, "bob", "write", true)
 
-	_, err = e.s.DeletePermissionsForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: "bob"})
+	_, err = e.s.DeletePermissionsForUser(e.ctx, &casbinpb.PermissionRequest{EnforcerHandler: e.h, User: "bob"})
 	assert.NoError(t, err)
 
 	testEnforceWithoutUsers(t, e, "alice", "read", false)
