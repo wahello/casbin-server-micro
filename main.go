@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate protoc -I casbinpb --micro_out=casbinpb --go_out=casbinpb casbinpb/casbin.proto
+//go:generate protoc  --micro_out=paths=source_relative:. --go_out=paths=source_relative:. casbinpb/casbin.proto
 
 package main
 

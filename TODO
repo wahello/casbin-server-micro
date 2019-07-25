@@ -1,0 +1,11 @@
+* create groups (aka role):
+  - owner
+  - developer
+  - accounting
+  - support
+  - readonly (view only)
+  - admin
+  - risk_manager
+  - financial
+  - support (??? как отличить от сапорта юзера)
+  - readonly (view only)

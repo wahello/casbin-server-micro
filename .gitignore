@@ -14,5 +14,4 @@
 .idea/
 *.iml
 
-*.pb.go
 /casbin-micro
