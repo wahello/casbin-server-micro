@@ -1,4 +1,4 @@
-module github.com/paysuper/echo-casbin-micro
+module github.com/paysuper/casbin-server
 
 go 1.12
 
