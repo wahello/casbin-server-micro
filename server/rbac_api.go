@@ -16,9 +16,8 @@ package server
 
 import (
 	"context"
-	"fmt"
 
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
 // GetRolesForUser gets the roles that a user has.
@@ -115,18 +114,16 @@ func (s *Server) DeleteUser(ctx context.Context, req *casbinpb.UserRoleRequest, 
 
 // DeleteRole deletes a role.
 func (s *Server) DeleteRole(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.EmptyReply) error {
-	res, err := s.enf.RemoveFilteredGroupingPolicy(1, req.Role)
+	// remove role, if it not exist not fatal
+	_, err := s.enf.RemoveFilteredGroupingPolicy(1, req.Role)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered group policy %v", req.Role)
 	}
 
-	res, err = s.enf.RemoveFilteredPolicy(0, req.Role)
+	// remove filtered policy, if it not exist not fatal
+	_, err = s.enf.RemoveFilteredPolicy(0, req.Role)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered policy %v", req.Role)
 	}
 
 	return nil
@@ -177,8 +174,6 @@ func (s *Server) DeletePermissionsForUser(ctx context.Context, req *casbinpb.Per
 	res, err := s.enf.RemoveFilteredPolicy(0, req.User)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered policy %v", req.User)
 	}
 
 	rsp.Res = res

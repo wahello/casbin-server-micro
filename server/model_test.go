@@ -23,7 +23,7 @@ import (
 	"context"
 
 	"github.com/stretchr/testify/assert"
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
 func testEnforce(t *testing.T, e *testEngine, sub string, obj string, act string, res bool) {

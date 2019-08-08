@@ -19,7 +19,7 @@ import (
 
 	"github.com/casbin/casbin/v2/util"
 	"github.com/stretchr/testify/assert"
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
 func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {

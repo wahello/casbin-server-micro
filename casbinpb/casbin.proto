@@ -14,7 +14,7 @@
 
 syntax = "proto3";
 
-package casbin;
+package casbinpb;
 
 option go_package = "casbinpb";
 

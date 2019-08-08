@@ -9,6 +9,7 @@ type Config struct {
 	Environment   string `envconfig:"ENVIRONMENT" default:"dev"`
 	BrokerAddress string `envconfig:"BROKER_ADDRESS" default:"amqp://127.0.0.1:5672"`
 	MicroRegistry string `envconfig:"MICRO_REGISTRY" required:"false"`
+	CasbinAdapter string `envconfig:"CASBIN_ADAPTER" required:"true"`
 	CasbinDSN     string `envconfig:"CASBIN_DSN" required:"true"`
 }
 

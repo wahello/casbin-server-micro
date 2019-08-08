@@ -81,7 +81,7 @@ func NewCasbinService(name string, c client.Client) CasbinService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "casbin"
+		name = "casbinpb"
 	}
 	return &casbinService{
 		c:    c,

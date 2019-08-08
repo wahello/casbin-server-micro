@@ -16,9 +16,8 @@ package server
 
 import (
 	"context"
-	"fmt"
 
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
 func (s *Server) wrapPlainPolicy(policy [][]string) *casbinpb.Array2DReply {
@@ -37,7 +36,7 @@ func (s *Server) wrapPlainPolicy(policy [][]string) *casbinpb.Array2DReply {
 
 // GetAllSubjects gets the list of subjects that show up in the current policy.
 func (s *Server) GetAllSubjects(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
-	return s.GetAllNamedSubjects(ctx, &casbinpb.SimpleGetRequest{ PType: "p"}, rsp)
+	return s.GetAllNamedSubjects(ctx, &casbinpb.SimpleGetRequest{PType: "p"}, rsp)
 }
 
 // GetAllNamedSubjects gets the list of subjects that show up in the current named policy.
@@ -49,7 +48,7 @@ func (s *Server) GetAllNamedSubjects(ctx context.Context, req *casbinpb.SimpleGe
 
 // GetAllObjects gets the list of objects that show up in the current policy.
 func (s *Server) GetAllObjects(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
-	return s.GetAllNamedObjects(ctx, &casbinpb.SimpleGetRequest{ PType: "p"}, rsp)
+	return s.GetAllNamedObjects(ctx, &casbinpb.SimpleGetRequest{PType: "p"}, rsp)
 }
 
 // GetAllNamedObjects gets the list of objects that show up in the current named policy.
@@ -61,7 +60,7 @@ func (s *Server) GetAllNamedObjects(ctx context.Context, req *casbinpb.SimpleGet
 
 // GetAllActions gets the list of actions that show up in the current policy.
 func (s *Server) GetAllActions(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
-	return s.GetAllNamedActions(ctx, &casbinpb.SimpleGetRequest{ PType: "p"}, rsp)
+	return s.GetAllNamedActions(ctx, &casbinpb.SimpleGetRequest{PType: "p"}, rsp)
 }
 
 // GetAllNamedActions gets the list of actions that show up in the current named policy.
@@ -73,7 +72,7 @@ func (s *Server) GetAllNamedActions(ctx context.Context, req *casbinpb.SimpleGet
 
 // GetAllRoles gets the list of roles that show up in the current policy.
 func (s *Server) GetAllRoles(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
-	return s.GetAllNamedRoles(ctx, &casbinpb.SimpleGetRequest{ PType: "g"}, rsp)
+	return s.GetAllNamedRoles(ctx, &casbinpb.SimpleGetRequest{PType: "g"}, rsp)
 }
 
 // GetAllNamedRoles gets the list of roles that show up in the current named policy.
@@ -85,7 +84,7 @@ func (s *Server) GetAllNamedRoles(ctx context.Context, req *casbinpb.SimpleGetRe
 
 // GetPolicy gets all the authorization rules in the policy.
 func (s *Server) GetPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.Array2DReply) error {
-	return s.GetNamedPolicy(ctx, &casbinpb.PolicyRequest{ PType: "p"}, rsp)
+	return s.GetNamedPolicy(ctx, &casbinpb.PolicyRequest{PType: "p"}, rsp)
 }
 
 // GetNamedPolicy gets all the authorization rules in the named policy.
@@ -113,7 +112,7 @@ func (s *Server) GetFilteredNamedPolicy(ctx context.Context, req *casbinpb.Filte
 
 // GetGroupingPolicy gets all the role inheritance rules in the policy.
 func (s *Server) GetGroupingPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.Array2DReply) error {
-	return s.GetNamedGroupingPolicy(ctx, &casbinpb.PolicyRequest{ PType: "g"}, rsp)
+	return s.GetNamedGroupingPolicy(ctx, &casbinpb.PolicyRequest{PType: "g"}, rsp)
 }
 
 // GetNamedGroupingPolicy gets all the role inheritance rules in the policy.
@@ -186,8 +185,6 @@ func (s *Server) RemovePolicy(ctx context.Context, req *casbinpb.PolicyRequest, 
 	res, err := s.enf.RemovePolicy(req.Params)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove policy %v", req.Params)
 	}
 
 	rsp.Res = res
@@ -199,8 +196,6 @@ func (s *Server) RemoveNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequ
 	res, err := s.enf.RemoveNamedPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove named policy %v %v", req.PType, req.Params)
 	}
 
 	rsp.Res = res
@@ -213,8 +208,6 @@ func (s *Server) RemoveFilteredPolicy(ctx context.Context, req *casbinpb.Filtere
 	res, err := s.enf.RemoveFilteredNamedPolicy("p", int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered named policy")
 	}
 
 	rsp.Res = res
@@ -227,8 +220,6 @@ func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, req *casbinpb.Fi
 	res, err := s.enf.RemoveFilteredNamedPolicy(req.PType, int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered named policy")
 	}
 
 	rsp.Res = res
@@ -252,8 +243,6 @@ func (s *Server) AddNamedGroupingPolicy(ctx context.Context, req *casbinpb.Polic
 	res, err := s.enf.AddNamedGroupingPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to add named grouping policy")
 	}
 
 	rsp.Res = res
@@ -266,8 +255,6 @@ func (s *Server) RemoveGroupingPolicy(ctx context.Context, req *casbinpb.PolicyR
 	res, err := s.enf.RemoveNamedGroupingPolicy("g", req.Params)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove named grouping policy")
 	}
 
 	rsp.Res = res
@@ -280,8 +267,6 @@ func (s *Server) RemoveNamedGroupingPolicy(ctx context.Context, req *casbinpb.Po
 	res, err := s.enf.RemoveNamedGroupingPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove named grouping policy")
 	}
 
 	rsp.Res = res
@@ -294,8 +279,6 @@ func (s *Server) RemoveFilteredGroupingPolicy(ctx context.Context, req *casbinpb
 	res, err := s.enf.RemoveFilteredNamedGroupingPolicy("g", int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered named grouping policy")
 	}
 
 	rsp.Res = res
@@ -308,8 +291,6 @@ func (s *Server) RemoveFilteredNamedGroupingPolicy(ctx context.Context, req *cas
 	res, err := s.enf.RemoveFilteredNamedGroupingPolicy(req.PType, int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
-	} else if !res {
-		return fmt.Errorf("casbin unable to remove filtered named grouping policy")
 	}
 
 	rsp.Res = res

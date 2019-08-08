@@ -21,7 +21,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
 type testEngine struct {

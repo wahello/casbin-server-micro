@@ -20,7 +20,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
 type Server struct {
@@ -41,11 +41,13 @@ func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp 
 	params := make([]interface{}, 0, len(req.Params))
 
 	m := s.enf.GetModel()["m"]["m"]
+	// store m.Value because parseAbacParam modifies m
 	sourceValue := m.Value
-
 	for index := range req.Params {
 		params = append(params, parseAbacParam(req.Params[index], m))
 	}
+	// restore m.Value
+	m.Value = sourceValue
 
 	res, err := s.enf.Enforce(params...)
 	if err != nil {
@@ -53,7 +55,6 @@ func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp 
 	}
 
 	rsp.Res = res
-	m.Value = sourceValue
 
 	return nil
 }

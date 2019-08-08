@@ -10,15 +10,20 @@ import (
 	health "github.com/InVisionApp/go-health"
 	"github.com/InVisionApp/go-health/handlers"
 	"github.com/casbin/casbin/v2/model"
-	gormadapter "github.com/casbin/gorm-adapter/v2"
-	_ "github.com/lib/pq"
 	micro "github.com/micro/go-micro"
 	"github.com/micro/go-plugins/client/selector/static"
 	metrics "github.com/micro/go-plugins/wrapper/monitoring/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	casbinpb "github.com/unistack-org/casbin-micro/casbinpb"
-	cserver "github.com/unistack-org/casbin-micro/server"
+	casbinpb "github.com/paysuper/casbin-server/casbinpb"
+	cserver "github.com/paysuper/casbin-server/server"
 	"go.uber.org/zap"
+
+	// database support
+	xormadapter "github.com/casbin/xorm-adapter"
+	// postgresql support
+	_ "github.com/lib/pq"
+	// remove
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Application struct {
@@ -68,19 +73,24 @@ func (app *Application) Init() {
 	app.msvc = micro.NewService(options...)
 	app.msvc.Init()
 
-	m, err := model.NewModelFromFile("policy.conf")
+	m, err := model.NewModelFromFile("model.conf")
 	if err != nil {
 		app.logger.Fatal("Failed to init casbin model", zap.Error(err))
 	}
 
-	a, err := gormadapter.NewAdapter("postgres", cfg.CasbinDSN)
+	xormAdapter, err := xormadapter.NewAdapter(cfg.CasbinAdapter, cfg.CasbinDSN)
 	if err != nil {
-		app.logger.Fatal("Failed to init casbin adapter", zap.Error(err))
+		app.logger.Fatal("Failed to init casbin xorm adapter", zap.Error(err))
 	}
 
-	app.csvc, err = cserver.NewServer(m, a)
+	app.csvc, err = cserver.NewServer(m, xormAdapter)
 	if err != nil {
 		app.logger.Fatal("Create service instance failed", zap.Error(err))
+	}
+
+	err = app.csvc.LoadPolicyFile("policy.conf")
+	if err != nil {
+		app.logger.Fatal("Failed to load policy file to adapter", zap.Error(err))
 	}
 
 	err = casbinpb.RegisterCasbinHandler(app.msvc.Server(), app.csvc)
