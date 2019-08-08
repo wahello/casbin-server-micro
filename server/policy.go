@@ -3,7 +3,6 @@ package server
 import (
 	"bufio"
 	"context"
-	"log"
 	"os"
 	"strings"
 
@@ -34,7 +33,6 @@ func (s *Server) LoadPolicyFile(path string) error {
 
 		req.PType = fields[0]
 		req.Params = fields[1:]
-		log.Printf("%#+v\n", req)
 		switch fields[0] {
 		case "p": // policy line
 			err = s.AddNamedPolicy(ctx, req, rsp)
