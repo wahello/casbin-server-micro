@@ -1,12 +1,10 @@
 Casbin Server
 ====
 
-[![Build Status](https://travis-ci.org/casbin/casbin-server.svg?branch=master)](https://travis-ci.org/casbin/casbin-server)
-[![Docker](https://img.shields.io/docker/build/casbin/casbin-server.svg)](https://hub.docker.com/r/casbin/casbin-server/builds/)
-[![Coverage Status](https://coveralls.io/repos/github/casbin/casbin-server/badge.svg?branch=master)](https://coveralls.io/github/casbin/casbin-server?branch=master)
-[![Godoc](https://godoc.org/github.com/casbin/casbin-server?status.svg)](https://godoc.org/github.com/casbin/casbin-server)
+[![Build Status](https://travis-ci.org/paysuper/casbin-server.svg?branch=master)](https://travis-ci.org/paysuper/casbin-server)
+[![Godoc](https://godoc.org/github.com/paysuper/casbin-server?status.svg)](https://godoc.org/github.com/paysuper/casbin-server)
 
-Casbin Server is the ``Access Control as a Service (ACaaS)`` solution based on [Casbin](https://github.com/casbin/casbin). It provides [gRPC](https://grpc.io/) interface for Casbin authorization.
+Casbin Server is the ``Access Control as a Service (ACaaS)`` solution based on [Casbin](https://github.com/casbin/casbin). It provides [go-micro](https://micro.mu/) interface for Casbin authorization.
 
 ## What is ``Casbin Server``?
 
@@ -39,7 +37,7 @@ Alternatively, you can also [run it from an IDE](https://github.com/casbin/casbi
 
 ## Installation
 
-    go get github.com/casbin/casbin-server
+    go get github.com/paysuper/casbin-server
 
 ## Database Support
 
