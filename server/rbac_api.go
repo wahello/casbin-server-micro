@@ -183,7 +183,7 @@ func (s *Server) DeletePermissionsForUser(ctx context.Context, req *casbinpb.Per
 
 // GetPermissionsForUser gets permissions for a user or role.
 func (s *Server) GetPermissionsForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.Array2DReply) error {
-	rsp = s.wrapPlainPolicy(s.enf.GetFilteredPolicy(0, req.User))
+	*rsp = *s.wrapPlainPolicy(s.enf.GetFilteredPolicy(0, req.User))
 
 	return nil
 }
@@ -192,6 +192,16 @@ func (s *Server) GetPermissionsForUser(ctx context.Context, req *casbinpb.Permis
 func (s *Server) HasPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
 	rsp.Res = s.enf.HasPolicy(s.convertPermissions(req.User, req.Permissions...)...)
 
+	return nil
+}
+
+// GetImplicitPermissionsForUser gets implicit permissions for a user or role
+func (s *Server) GetImplicitPermissionsForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.Array2DReply) error {
+	res, err := s.enf.GetImplicitPermissionsForUser(req.User, req.Permissions...)
+	if err != nil {
+		return err
+	}
+	*rsp = *s.wrapPlainPolicy(res)
 	return nil
 }
 

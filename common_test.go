@@ -2,6 +2,9 @@ package main
 
 import (
 	"bufio"
+	"context"
+	"flag"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -14,6 +17,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/micro/go-micro/client"
+	"github.com/paysuper/casbin-server/casbinpb"
 	casbinmw "github.com/paysuper/echo-casbin-middleware"
 )
 
@@ -72,7 +76,36 @@ func TestMain(m *testing.M) {
 	// close server
 	defer e.Close()
 
-	log.Printf("echo running on %s", httpAddr)
+	flag.Parse()
+	if err = os.Setenv("CASBIN_ADAPTER", "sqlite3"); err != nil {
+		log.Fatal(err)
+	}
+
+	if err = os.Setenv("CASBIN_DSN", "./database.sqlite3"); err != nil {
+		log.Fatal(err)
+	}
+
+	app := NewApplication()
+	app.Init()
+	go func() {
+		app.Run()
+	}()
+
+	req := &casbinpb.UserRoleRequest{User: "12345678-1234-1234-1234-123456789012", Role: "system_view_only"}
+	rsp := &casbinpb.BoolReply{}
+	if err = app.csvc.AddRoleForUser(context.Background(), req, rsp); err != nil {
+		log.Fatal(err)
+	}
+
+	sl := &casbinpb.Array2DReply{}
+	if err := app.csvc.GetImplicitPermissionsForUser(context.Background(), &casbinpb.PermissionRequest{
+		User: "12345678-1234-1234-1234-123456789012"}, sl); err != nil {
+		log.Fatal(err)
+	}
+
+	for _, p := range sl.D2 {
+		fmt.Printf("%#+v\n", p)
+	}
 	ecode := m.Run()
 
 	os.Exit(ecode)

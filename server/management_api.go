@@ -90,7 +90,7 @@ func (s *Server) GetPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp 
 // GetNamedPolicy gets all the authorization rules in the named policy.
 func (s *Server) GetNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.Array2DReply) error {
 	res := s.enf.GetModel().GetPolicy("p", req.PType)
-	rsp = s.wrapPlainPolicy(res)
+	*rsp = *s.wrapPlainPolicy(res)
 
 	return nil
 }
@@ -105,7 +105,7 @@ func (s *Server) GetFilteredPolicy(ctx context.Context, req *casbinpb.FilteredPo
 // GetFilteredNamedPolicy gets all the authorization rules in the named policy, field filters can be specified.
 func (s *Server) GetFilteredNamedPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *casbinpb.Array2DReply) error {
 	res := s.enf.GetModel().GetFilteredPolicy("p", req.PType, int(req.FieldIndex), req.FieldValues...)
-	rsp = s.wrapPlainPolicy(res)
+	*rsp = *s.wrapPlainPolicy(res)
 
 	return nil
 }
@@ -118,7 +118,8 @@ func (s *Server) GetGroupingPolicy(ctx context.Context, req *casbinpb.EmptyReque
 // GetNamedGroupingPolicy gets all the role inheritance rules in the policy.
 func (s *Server) GetNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.Array2DReply) error {
 	res := s.enf.GetModel().GetPolicy("g", req.PType)
-	rsp = s.wrapPlainPolicy(res)
+
+	*rsp = *s.wrapPlainPolicy(res)
 
 	return nil
 }
@@ -133,7 +134,8 @@ func (s *Server) GetFilteredGroupingPolicy(ctx context.Context, req *casbinpb.Fi
 // GetFilteredNamedGroupingPolicy gets all the role inheritance rules in the policy, field filters can be specified.
 func (s *Server) GetFilteredNamedGroupingPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *casbinpb.Array2DReply) error {
 	res := s.enf.GetModel().GetFilteredPolicy("g", req.PType, int(req.FieldIndex), req.FieldValues...)
-	rsp = s.wrapPlainPolicy(res)
+
+	*rsp = *s.wrapPlainPolicy(res)
 
 	return nil
 }

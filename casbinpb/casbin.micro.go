@@ -69,6 +69,7 @@ type CasbinService interface {
 	HasNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...client.CallOption) (*BoolReply, error)
 	HasGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...client.CallOption) (*BoolReply, error)
 	HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...client.CallOption) (*BoolReply, error)
+	GetImplicitPermissionsForUser(ctx context.Context, in *PermissionRequest, opts ...client.CallOption) (*Array2DReply, error)
 }
 
 type casbinService struct {
@@ -439,6 +440,16 @@ func (c *casbinService) HasNamedGroupingPolicy(ctx context.Context, in *PolicyRe
 	return out, nil
 }
 
+func (c *casbinService) GetImplicitPermissionsForUser(ctx context.Context, in *PermissionRequest, opts ...client.CallOption) (*Array2DReply, error) {
+	req := c.c.NewRequest(c.name, "Casbin.GetImplicitPermissionsForUser", in)
+	out := new(Array2DReply)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Casbin service
 
 type CasbinHandler interface {
@@ -477,6 +488,7 @@ type CasbinHandler interface {
 	HasNamedPolicy(context.Context, *PolicyRequest, *BoolReply) error
 	HasGroupingPolicy(context.Context, *PolicyRequest, *BoolReply) error
 	HasNamedGroupingPolicy(context.Context, *PolicyRequest, *BoolReply) error
+	GetImplicitPermissionsForUser(context.Context, *PermissionRequest, *Array2DReply) error
 }
 
 func RegisterCasbinHandler(s server.Server, hdlr CasbinHandler, opts ...server.HandlerOption) error {
@@ -516,6 +528,7 @@ func RegisterCasbinHandler(s server.Server, hdlr CasbinHandler, opts ...server.H
 		HasNamedPolicy(ctx context.Context, in *PolicyRequest, out *BoolReply) error
 		HasGroupingPolicy(ctx context.Context, in *PolicyRequest, out *BoolReply) error
 		HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, out *BoolReply) error
+		GetImplicitPermissionsForUser(ctx context.Context, in *PermissionRequest, out *Array2DReply) error
 	}
 	type Casbin struct {
 		casbin
@@ -666,4 +679,8 @@ func (h *casbinHandler) HasGroupingPolicy(ctx context.Context, in *PolicyRequest
 
 func (h *casbinHandler) HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, out *BoolReply) error {
 	return h.CasbinHandler.HasNamedGroupingPolicy(ctx, in, out)
+}
+
+func (h *casbinHandler) GetImplicitPermissionsForUser(ctx context.Context, in *PermissionRequest, out *Array2DReply) error {
+	return h.CasbinHandler.GetImplicitPermissionsForUser(ctx, in, out)
 }
