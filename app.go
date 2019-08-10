@@ -13,9 +13,9 @@ import (
 	micro "github.com/micro/go-micro"
 	"github.com/micro/go-plugins/client/selector/static"
 	metrics "github.com/micro/go-plugins/wrapper/monitoring/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 	cserver "github.com/paysuper/casbin-server/server"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 
 	// database support
@@ -45,7 +45,6 @@ func (app *Application) Init() {
 	app.initLogger()
 
 	cfg, err := NewConfig()
-
 	if err != nil {
 		app.logger.Fatal("Config load failed", zap.Error(err))
 	}

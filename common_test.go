@@ -37,6 +37,8 @@ type (
 func TestMain(m *testing.M) {
 	var err error
 
+	// rewrite args to disable test flags
+	os.Args = []string{os.Args[0]}
 	// Echo instance
 	e := echo.New()
 	e.HideBanner = true
