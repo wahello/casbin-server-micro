@@ -1,3 +1,4 @@
+// +build ignore
 // Copyright 2018 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +19,8 @@ import (
 	"testing"
 
 	"github.com/casbin/casbin/v2/util"
-	"github.com/stretchr/testify/assert"
 	casbinpb "github.com/paysuper/casbin-server/casbinpb"
+	"github.com/stretchr/testify/assert"
 )
 
 func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {
