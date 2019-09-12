@@ -8,6 +8,7 @@ require (
 	github.com/casbin/casbin/v2 v2.0.2
 	github.com/casbin/xorm-adapter v0.0.0-20190806085643-0629743c2857
 	github.com/go-xorm/xorm v0.7.6 // indirect
+	github.com/gogo/protobuf v1.3.1-0.20190908201246-8a5ed79f6888 // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.1.1
 	github.com/hashicorp/consul/api v1.2.0 // indirect
