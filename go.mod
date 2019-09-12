@@ -35,6 +35,7 @@ replace (
 	github.com/hashicorp/consul => github.com/hashicorp/consul v1.5.2
 	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.1.0
 	github.com/lucas-clemente/quic-go => github.com/lucas-clemente/quic-go v0.11.0
+	github.com/marten-seemann/qtls => github.com/marten-seemann/qtls v0.4.0
 	//github.com/unistack-org/casbin-micro => github.com/paysuper/casbin-server v0.0.0-20190809212717-30678425fdda
 	gopkg.in/DATA-DOG/go-sqlmock.v1 => github.com/DATA-DOG/go-sqlmock v1.3.3
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.21.0
