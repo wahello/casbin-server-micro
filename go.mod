@@ -14,7 +14,7 @@ require (
 	github.com/lib/pq v1.2.0
 	github.com/marten-seemann/qtls v0.3.3 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0
-	github.com/micro/go-micro v1.10.0
+	github.com/micro/go-micro v1.9.1
 	github.com/micro/go-plugins v1.2.1-0.20190803141733-bc5828af5d4f
 	github.com/miekg/dns v1.1.17 // indirect
 	github.com/prometheus/client_golang v1.1.0
@@ -36,7 +36,6 @@ replace (
 	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.1.0
 	github.com/lucas-clemente/quic-go => github.com/lucas-clemente/quic-go v0.11.0
 	github.com/marten-seemann/qtls => github.com/marten-seemann/qtls v0.4.0
-	//github.com/unistack-org/casbin-micro => github.com/paysuper/casbin-server v0.0.0-20190809212717-30678425fdda
 	gopkg.in/DATA-DOG/go-sqlmock.v1 => github.com/DATA-DOG/go-sqlmock v1.3.3
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.21.0
 	sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.1
