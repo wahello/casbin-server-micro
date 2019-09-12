@@ -25,7 +25,7 @@ replace (
 	github.com/golang/lint => github.com/golang/lint v0.0.0-20190227174305-8f45f776aaf1
 	github.com/hashicorp/consul => github.com/hashicorp/consul v1.5.2
 	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.1.0
-	//github.com/lucas-clemente/quic-go => github.com/lucas-clemente/quic-go v0.11.2
+	github.com/lucas-clemente/quic-go => github.com/lucas-clemente/quic-go v0.12.0
 	gopkg.in/DATA-DOG/go-sqlmock.v1 => github.com/DATA-DOG/go-sqlmock v1.3.3
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.21.0
 	sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.1
