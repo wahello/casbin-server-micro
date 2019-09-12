@@ -8,19 +8,15 @@ require (
 	github.com/casbin/casbin/v2 v2.0.2
 	github.com/casbin/xorm-adapter v0.0.0-20190806085643-0629743c2857
 	github.com/go-xorm/xorm v0.7.6 // indirect
-	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golang/protobuf v1.3.2
-	github.com/google/uuid v1.1.1
 	github.com/hashicorp/consul/api v1.2.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/labstack/echo/v4 v4.1.6
 	github.com/lib/pq v1.2.0
 	github.com/marten-seemann/qtls v0.3.3 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/micro/go-micro v1.10.0
 	github.com/micro/go-plugins v1.2.1-0.20190803141733-bc5828af5d4f
 	github.com/miekg/dns v1.1.17 // indirect
-	github.com/paysuper/echo-casbin-middleware v0.0.0-20190810212121-02efa137c0bb
 	github.com/prometheus/client_golang v1.1.0
 	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
 	github.com/prometheus/procfs v0.0.4 // indirect
@@ -34,10 +30,12 @@ require (
 )
 
 replace (
+	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.0
 	github.com/golang/lint => github.com/golang/lint v0.0.0-20190227174305-8f45f776aaf1
 	github.com/hashicorp/consul => github.com/hashicorp/consul v1.5.2
 	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.1.0
-	github.com/unistack-org/casbin-micro => github.com/paysuper/casbin-server v0.0.0-20190809212717-30678425fdda
+	github.com/lucas-clemente/quic-go => github.com/lucas-clemente/quic-go v0.11.0
+	//github.com/unistack-org/casbin-micro => github.com/paysuper/casbin-server v0.0.0-20190809212717-30678425fdda
 	gopkg.in/DATA-DOG/go-sqlmock.v1 => github.com/DATA-DOG/go-sqlmock v1.3.3
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.21.0
 	sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.1

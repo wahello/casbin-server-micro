@@ -1,10 +1,11 @@
-package main
+// +build ignore
+
+package main_test
 
 import (
 	"bufio"
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -13,16 +14,18 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/micro/go-micro/client"
-	"github.com/paysuper/casbin-server/casbinpb"
 	casbinmw "github.com/paysuper/echo-casbin-middleware"
 )
 
 var (
-	httpAddr      string
+	httpAddr string
+	reqs     []*http.Request
+
 	getHandler    = func(ctx echo.Context) error { return ctx.String(http.StatusOK, "GET\n") }
 	postHandler   = func(ctx echo.Context) error { return ctx.String(http.StatusCreated, "POST\n") }
 	deleteHandler = func(ctx echo.Context) error { return ctx.NoContent(http.StatusNoContent) }
@@ -93,24 +96,34 @@ func TestMain(m *testing.M) {
 		app.Run()
 	}()
 
-	req := &casbinpb.UserRoleRequest{User: "12345678-1234-1234-1234-123456789012", Role: "system_view_only"}
+	req := &casbinpb.UserRoleRequest{User: "12345678-1234-1234-1234-123456789012", Role: "system_admin"}
 	rsp := &casbinpb.BoolReply{}
 	if err = app.csvc.AddRoleForUser(context.Background(), req, rsp); err != nil {
 		log.Fatal(err)
 	}
-
-	sl := &casbinpb.Array2DReply{}
-	if err := app.csvc.GetImplicitPermissionsForUser(context.Background(), &casbinpb.PermissionRequest{
-		User: "12345678-1234-1234-1234-123456789012"}, sl); err != nil {
+	req = &casbinpb.UserRoleRequest{User: "12345678-1234-1234-1234-123456789012", Role: "system_view_only"}
+	if err = app.csvc.AddRoleForUser(context.Background(), req, rsp); err != nil {
 		log.Fatal(err)
 	}
 
-	for _, p := range sl.D2 {
-		fmt.Printf("%#+v\n", p)
+	sl := &casbinpb.ArrayReply{}
+	if err := app.csvc.GetRolesForUser(context.Background(), &casbinpb.UserRoleRequest{
+		User: "12345678-1234-1234-1234-123456789012"}, sl); err != nil {
+		log.Fatal(err)
 	}
 	ecode := m.Run()
 
 	os.Exit(ecode)
+}
+
+func TestRequests(t *testing.T) {
+	var rsp *http.Response
+	var err error
+
+	c := &http.Client{}
+	for _, req := range reqs {
+		rsp, err = client.Do(req)
+	}
 }
 
 func setupHandlers(e *echo.Echo, mapfn map[string]routerFn) error {
@@ -119,6 +132,8 @@ func setupHandlers(e *echo.Echo, mapfn map[string]routerFn) error {
 		return err
 	}
 	defer f.Close()
+
+	var req *http.Request
 
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
@@ -133,10 +148,20 @@ func setupHandlers(e *echo.Echo, mapfn map[string]routerFn) error {
 		}
 
 		method := fields[len(fields)-1]
+		path := fields[2]
+
 		fn, ok := mapfn[method]
 		if !ok {
 			continue
 		}
+
+		if strings.Count(path, "*") > 0 {
+			rid, _ := uuid.NewRandom()
+			path = strings.ReplaceAll(path, "*", rid)
+		}
+
+		req = http.NewRequest(method, path, nil)
+		req.Header.Add("X-USER", `W/"wyzzy"`)
 
 		switch method {
 		case "GET":
@@ -150,6 +175,8 @@ func setupHandlers(e *echo.Echo, mapfn map[string]routerFn) error {
 		case "DELETE":
 			fn(fields[2], deleteHandler)
 		}
+
+		reqs = append(reqs, req)
 	}
 
 	return nil
