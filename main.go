@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //go:generate go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-//go:generate protoc -I./proto -Icasbinpb/ --swagger_out=logtostderr=true:. --micro_out=paths=source_relative:./casbinpb --go_out=paths=source_relative:./casbinpb casbin.proto
+//go:generate protoc -I./proto -Icasbinpb/ --swagger_out=allow_delete_body=true,logtostderr=true:. --micro_out=paths=source_relative:./casbinpb --go_out=paths=source_relative:./casbinpb casbin.proto
 
 package main
 

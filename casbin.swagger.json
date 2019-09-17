@@ -22,7 +22,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -39,7 +39,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -56,7 +56,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -73,7 +73,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -90,7 +90,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -582,7 +582,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -617,7 +617,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -652,7 +652,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -687,7 +687,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/casbinpbBoolReply"
+              "properties": {}
             }
           }
         },
@@ -1088,15 +1088,6 @@
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "casbinpbBoolReply": {
-      "type": "object",
-      "properties": {
-        "res": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     }

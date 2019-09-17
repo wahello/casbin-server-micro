@@ -32,7 +32,7 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 // The Casbin service definition.
 service Casbin {
-  rpc Enforce (EnforceRequest) returns (BoolReply) {
+  rpc Enforce (EnforceRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "Enforce";
       description: "Check permissions for user on endpoint with specific method";
@@ -56,7 +56,7 @@ service Casbin {
     option (google.api.http) = { put: "/casbin/save_policy" };
   };
 
-  rpc AddPolicy (PolicyRequest) returns (BoolReply) {
+  rpc AddPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "AddPolicy";
       description: "Add new policy rule";
@@ -64,7 +64,7 @@ service Casbin {
     option (google.api.http) = { post: "/casbin/add_policy" };
   };
 
-  rpc AddNamedPolicy (PolicyRequest) returns (BoolReply) {
+  rpc AddNamedPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "AddNamedPolicy";
       description: "Add new named policy rule";
@@ -136,7 +136,7 @@ service Casbin {
     option (google.api.http) = { get: "/casbin/get_filtered_named_policy" };
   };
 
-  rpc AddGroupingPolicy (PolicyRequest) returns (BoolReply) {
+  rpc AddGroupingPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "AddGroupingPolicy";
       description: "Add grouping policy";
@@ -144,7 +144,7 @@ service Casbin {
     option (google.api.http) = { post: "/casbin/add_grouping_policy" };
   };
 
-  rpc AddNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {
+  rpc AddNamedGroupingPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "AddNamedGroupingPolicy";
       description: "Add named grouping policy";
@@ -281,7 +281,7 @@ service Casbin {
     option (google.api.http) = { get: "/casbin/get_all_named_roles" };
   };
 
-  rpc HasPolicy (PolicyRequest) returns (BoolReply) {
+  rpc HasPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "HasPolicy";
       description: "Has policy";
@@ -289,7 +289,7 @@ service Casbin {
     option (google.api.http) = { get: "/casbin/has_policy" };
   };
 
-  rpc HasNamedPolicy (PolicyRequest) returns (BoolReply) {
+  rpc HasNamedPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "HasNamedPolicy";
       description: "Has named policy";
@@ -297,7 +297,7 @@ service Casbin {
     option (google.api.http) = { get: "/casbin/has_named_policy" };
   };
 
-  rpc HasGroupingPolicy (PolicyRequest) returns (BoolReply) {
+  rpc HasGroupingPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "HasGroupingPolicy";
       description: "Has grouping policy";
@@ -305,7 +305,7 @@ service Casbin {
     option (google.api.http) = { get: "/casbin/has_grouping_policy" };
   };
 
-  rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {
+  rpc HasNamedGroupingPolicy (PolicyRequest) returns (google.protobuf.Empty) {
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       operation_id: "HasNamedGroupingPolicy";
       description: "Has named grouping policy";
@@ -324,10 +324,6 @@ service Casbin {
 
 message EnforceRequest {
   repeated string params = 2;
-}
-
-message BoolReply {
-  bool res = 1;
 }
 
 message PolicyRequest {

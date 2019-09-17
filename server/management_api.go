@@ -142,44 +142,47 @@ func (s *Server) GetFilteredNamedGroupingPolicy(ctx context.Context, req *casbin
 }
 
 // HasPolicy determines whether an authorization rule exists.
-func (s *Server) HasPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) HasPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	return s.HasNamedPolicy(ctx, req, rsp)
 }
 
 // HasNamedPolicy determines whether a named authorization rule exists.
-func (s *Server) HasNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
-	rsp.Res = s.enf.GetModel().HasPolicy("p", req.PType, req.Params)
+func (s *Server) HasNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
+	if res := s.enf.GetModel().HasPolicy("p", req.PType, req.Params); !res {
+		return ErrNotExists
+	}
 
 	return nil
 }
 
 // HasGroupingPolicy determines whether a role inheritance rule exists.
-func (s *Server) HasGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) HasGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	req.PType = "g"
-
 	return s.HasNamedGroupingPolicy(ctx, req, rsp)
 }
 
 // HasNamedGroupingPolicy determines whether a named role inheritance rule exists.
-func (s *Server) HasNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
-	rsp.Res = s.enf.GetModel().HasPolicy("g", req.PType, req.Params)
+func (s *Server) HasNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
+	if res := s.enf.GetModel().HasPolicy("g", req.PType, req.Params); !res {
+		return ErrNotExists
+	}
 
 	return nil
 }
 
-func (s *Server) AddPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) AddPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	req.PType = "p"
 
 	return s.AddNamedPolicy(ctx, req, rsp)
 }
 
-func (s *Server) AddNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) AddNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.AddNamedPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
@@ -233,7 +236,7 @@ func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, req *casbinpb.Fi
 // AddGroupingPolicy adds a role inheritance rule to the current policy.
 // If the rule already exists, the function returns false and the rule will not be added.
 // Otherwise the function returns true by adding the new rule.
-func (s *Server) AddGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) AddGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	req.PType = "g"
 
 	return s.AddNamedGroupingPolicy(ctx, req, rsp)
@@ -242,13 +245,13 @@ func (s *Server) AddGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequ
 // AddNamedGroupingPolicy adds a named role inheritance rule to the current policy.
 // If the rule already exists, the function returns false and the rule will not be added.
 // Otherwise the function returns true by adding the new rule.
-func (s *Server) AddNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) AddNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.AddNamedGroupingPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }

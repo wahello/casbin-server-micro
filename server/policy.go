@@ -16,7 +16,6 @@ func (s *Server) LoadPolicyFile(path string) error {
 	}
 	defer f.Close()
 
-	rsp := new(casbinpb.BoolReply)
 	req := new(casbinpb.PolicyRequest)
 	sc := bufio.NewScanner(f)
 	ctx := context.Background()
@@ -35,9 +34,9 @@ func (s *Server) LoadPolicyFile(path string) error {
 		req.Params = fields[1:]
 		switch fields[0] {
 		case "p": // policy line
-			err = s.AddNamedPolicy(ctx, req, rsp)
+			err = s.AddNamedPolicy(ctx, req, nil)
 		case "g": // group line
-			err = s.AddNamedGroupingPolicy(ctx, req, rsp)
+			err = s.AddNamedGroupingPolicy(ctx, req, nil)
 		}
 		if err != nil {
 			return err

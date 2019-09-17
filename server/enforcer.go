@@ -38,7 +38,7 @@ func NewServer(m model.Model, a persist.Adapter) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp *empty.Empty) error {
 	params := make([]interface{}, 0, len(req.Params))
 
 	m := s.enf.GetModel()["m"]["m"]
@@ -53,9 +53,9 @@ func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp 
 	res, err := s.enf.Enforce(params...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrDenied
 	}
-
-	rsp.Res = res
 
 	return nil
 }

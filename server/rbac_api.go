@@ -45,7 +45,7 @@ func (s *Server) GetUsersForRole(ctx context.Context, req *casbinpb.UserRoleRequ
 }
 
 // HasRoleForUser determines whether a user has a role.
-func (s *Server) HasRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) HasRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *empty.Empty) error {
 	roles, err := s.enf.GetRolesForUser(req.User)
 	if err != nil {
 		return err
@@ -53,62 +53,61 @@ func (s *Server) HasRoleForUser(ctx context.Context, req *casbinpb.UserRoleReque
 
 	for _, r := range roles {
 		if r == req.Role {
-			rsp.Res = true
-			break
+			return nil
 		}
 	}
 
-	return nil
+	return ErrNotExists
 }
 
 // AddRoleForUser adds a role for a user.
 // Returns false if the user already has the role (aka not affected).
-func (s *Server) AddRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) AddRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *empty.Empty) error {
 	res, err := s.enf.AddGroupingPolicy(req.User, req.Role)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // DeleteRoleForUser deletes a role for a user.
 // Returns false if the user does not have the role (aka not affected).
-func (s *Server) DeleteRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) DeleteRoleForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveGroupingPolicy(req.User, req.Role)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // DeleteRolesForUser deletes all roles for a user.
 // Returns false if the user does not have any roles (aka not affected).
-func (s *Server) DeleteRolesForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) DeleteRolesForUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredGroupingPolicy(0, req.User)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // DeleteUser deletes a user.
 // Returns false if the user does not exist (aka not affected).
-func (s *Server) DeleteUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) DeleteUser(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredGroupingPolicy(0, req.User)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
@@ -132,52 +131,52 @@ func (s *Server) DeleteRole(ctx context.Context, req *casbinpb.UserRoleRequest, 
 
 // DeletePermission deletes a permission.
 // Returns false if the permission does not exist (aka not affected).
-func (s *Server) DeletePermission(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) DeletePermission(ctx context.Context, req *casbinpb.PermissionRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredPolicy(1, req.Permissions...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // AddPermissionForUser adds a permission for a user or role.
 // Returns false if the user or role already has the permission (aka not affected).
-func (s *Server) AddPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) AddPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *empty.Empty) error {
 	res, err := s.enf.AddPolicy(s.convertPermissions(req.User, req.Permissions...)...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // DeletePermissionForUser deletes a permission for a user or role.
 // Returns false if the user or role does not have the permission (aka not affected).
-func (s *Server) DeletePermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) DeletePermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemovePolicy(s.convertPermissions(req.User, req.Permissions...)...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // DeletePermissionsForUser deletes permissions for a user or role.
 // Returns false if the user or role does not have any permissions (aka not affected).
-func (s *Server) DeletePermissionsForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) DeletePermissionsForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredPolicy(0, req.User)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
@@ -190,8 +189,10 @@ func (s *Server) GetPermissionsForUser(ctx context.Context, req *casbinpb.Permis
 }
 
 // HasPermissionForUser determines whether a user has a permission.
-func (s *Server) HasPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *casbinpb.BoolReply) error {
-	rsp.Res = s.enf.HasPolicy(s.convertPermissions(req.User, req.Permissions...)...)
+func (s *Server) HasPermissionForUser(ctx context.Context, req *casbinpb.PermissionRequest, rsp *empty.Empty) error {
+	if res := s.enf.HasPolicy(s.convertPermissions(req.User, req.Permissions...)...); !res {
+		return ErrNotExists
+	}
 
 	return nil
 }
