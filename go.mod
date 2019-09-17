@@ -19,7 +19,6 @@ require (
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472 // indirect
 	golang.org/x/sys v0.0.0-20190904154756-749cb33beabd // indirect
 	google.golang.org/genproto v0.0.0-20190801165951-fa694d86fc64
-	google.golang.org/grpc v1.22.1
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.0.0-00010101000000-000000000000 // indirect
 )
 
