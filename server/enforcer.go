@@ -20,6 +20,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
+	"github.com/golang/protobuf/ptypes/empty"
 	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
@@ -59,10 +60,10 @@ func (s *Server) Enforce(ctx context.Context, req *casbinpb.EnforceRequest, rsp 
 	return nil
 }
 
-func (s *Server) LoadPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.EmptyReply) error {
+func (s *Server) LoadPolicy(ctx context.Context, req *empty.Empty, rsp *empty.Empty) error {
 	return s.enf.LoadPolicy()
 }
 
-func (s *Server) SavePolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.EmptyReply) error {
+func (s *Server) SavePolicy(ctx context.Context, req *empty.Empty, rsp *empty.Empty) error {
 	return s.enf.SavePolicy()
 }

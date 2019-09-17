@@ -8,6 +8,7 @@ require (
 	github.com/casbin/casbin/v2 v2.0.1
 	github.com/casbin/xorm-adapter v0.0.0-20190806085643-0629743c2857
 	github.com/golang/protobuf v1.3.2
+	github.com/grpc-ecosystem/grpc-gateway v1.11.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.2.0
 	github.com/mattn/go-sqlite3 v1.10.0
@@ -17,6 +18,8 @@ require (
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472 // indirect
 	golang.org/x/sys v0.0.0-20190904154756-749cb33beabd // indirect
+	google.golang.org/genproto v0.0.0-20190801165951-fa694d86fc64
+	google.golang.org/grpc v1.22.1
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.0.0-00010101000000-000000000000 // indirect
 )
 

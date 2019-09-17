@@ -17,6 +17,7 @@ package server
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
@@ -35,7 +36,7 @@ func (s *Server) wrapPlainPolicy(policy [][]string) *casbinpb.Array2DReply {
 }
 
 // GetAllSubjects gets the list of subjects that show up in the current policy.
-func (s *Server) GetAllSubjects(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
+func (s *Server) GetAllSubjects(ctx context.Context, req *empty.Empty, rsp *casbinpb.ArrayReply) error {
 	return s.GetAllNamedSubjects(ctx, &casbinpb.SimpleGetRequest{PType: "p"}, rsp)
 }
 
@@ -47,7 +48,7 @@ func (s *Server) GetAllNamedSubjects(ctx context.Context, req *casbinpb.SimpleGe
 }
 
 // GetAllObjects gets the list of objects that show up in the current policy.
-func (s *Server) GetAllObjects(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
+func (s *Server) GetAllObjects(ctx context.Context, req *empty.Empty, rsp *casbinpb.ArrayReply) error {
 	return s.GetAllNamedObjects(ctx, &casbinpb.SimpleGetRequest{PType: "p"}, rsp)
 }
 
@@ -59,7 +60,7 @@ func (s *Server) GetAllNamedObjects(ctx context.Context, req *casbinpb.SimpleGet
 }
 
 // GetAllActions gets the list of actions that show up in the current policy.
-func (s *Server) GetAllActions(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
+func (s *Server) GetAllActions(ctx context.Context, req *empty.Empty, rsp *casbinpb.ArrayReply) error {
 	return s.GetAllNamedActions(ctx, &casbinpb.SimpleGetRequest{PType: "p"}, rsp)
 }
 
@@ -71,7 +72,7 @@ func (s *Server) GetAllNamedActions(ctx context.Context, req *casbinpb.SimpleGet
 }
 
 // GetAllRoles gets the list of roles that show up in the current policy.
-func (s *Server) GetAllRoles(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.ArrayReply) error {
+func (s *Server) GetAllRoles(ctx context.Context, req *empty.Empty, rsp *casbinpb.ArrayReply) error {
 	return s.GetAllNamedRoles(ctx, &casbinpb.SimpleGetRequest{PType: "g"}, rsp)
 }
 
@@ -83,7 +84,7 @@ func (s *Server) GetAllNamedRoles(ctx context.Context, req *casbinpb.SimpleGetRe
 }
 
 // GetPolicy gets all the authorization rules in the policy.
-func (s *Server) GetPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.Array2DReply) error {
+func (s *Server) GetPolicy(ctx context.Context, req *empty.Empty, rsp *casbinpb.Array2DReply) error {
 	return s.GetNamedPolicy(ctx, &casbinpb.PolicyRequest{PType: "p"}, rsp)
 }
 
@@ -111,7 +112,7 @@ func (s *Server) GetFilteredNamedPolicy(ctx context.Context, req *casbinpb.Filte
 }
 
 // GetGroupingPolicy gets all the role inheritance rules in the policy.
-func (s *Server) GetGroupingPolicy(ctx context.Context, req *casbinpb.EmptyRequest, rsp *casbinpb.Array2DReply) error {
+func (s *Server) GetGroupingPolicy(ctx context.Context, req *empty.Empty, rsp *casbinpb.Array2DReply) error {
 	return s.GetNamedGroupingPolicy(ctx, &casbinpb.PolicyRequest{PType: "g"}, rsp)
 }
 
@@ -183,48 +184,48 @@ func (s *Server) AddNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest
 	return nil
 }
 
-func (s *Server) RemovePolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemovePolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemovePolicy(req.Params)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
-func (s *Server) RemoveNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveNamedPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveNamedPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // RemoveFilteredPolicy removes an authorization rule from the current policy, field filters can be specified.
-func (s *Server) RemoveFilteredPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveFilteredPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredNamedPolicy("p", int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // RemoveFilteredNamedPolicy removes an authorization rule from the current named policy, field filters can be specified.
-func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredNamedPolicy(req.PType, int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
@@ -253,49 +254,49 @@ func (s *Server) AddNamedGroupingPolicy(ctx context.Context, req *casbinpb.Polic
 }
 
 // RemoveGroupingPolicy removes a role inheritance rule from the current policy.
-func (s *Server) RemoveGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveNamedGroupingPolicy("g", req.Params)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // RemoveNamedGroupingPolicy removes a role inheritance rule from the current named policy.
-func (s *Server) RemoveNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveNamedGroupingPolicy(ctx context.Context, req *casbinpb.PolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveNamedGroupingPolicy(req.PType, req.Params)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // RemoveFilteredGroupingPolicy removes a role inheritance rule from the current policy, field filters can be specified.
-func (s *Server) RemoveFilteredGroupingPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveFilteredGroupingPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredNamedGroupingPolicy("g", int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }
 
 // RemoveFilteredNamedGroupingPolicy removes a role inheritance rule from the current named policy, field filters can be specified.
-func (s *Server) RemoveFilteredNamedGroupingPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *casbinpb.BoolReply) error {
+func (s *Server) RemoveFilteredNamedGroupingPolicy(ctx context.Context, req *casbinpb.FilteredPolicyRequest, rsp *empty.Empty) error {
 	res, err := s.enf.RemoveFilteredNamedGroupingPolicy(req.PType, int(req.FieldIndex), req.FieldValues...)
 	if err != nil {
 		return err
+	} else if !res {
+		return ErrNotExists
 	}
-
-	rsp.Res = res
 
 	return nil
 }

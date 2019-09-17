@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate protoc  --micro_out=paths=source_relative:. --go_out=paths=source_relative:. casbinpb/casbin.proto
+//go:generate go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+//go:generate protoc -I./proto -Icasbinpb/ --swagger_out=logtostderr=true:. --micro_out=paths=source_relative:./casbinpb --go_out=paths=source_relative:./casbinpb casbin.proto
 
 package main
 

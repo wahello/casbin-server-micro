@@ -1,0 +1,1104 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "casbin.proto",
+    "version": "0"
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/grpc"
+  ],
+  "produces": [
+    "application/grpc"
+  ],
+  "paths": {
+    "/casbin/add_grouping_policy": {
+      "post": {
+        "description": "Add grouping policy",
+        "operationId": "AddGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/add_named_grouping_policy": {
+      "post": {
+        "description": "Add named grouping policy",
+        "operationId": "AddNamedGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/add_named_policy": {
+      "post": {
+        "description": "Add new named policy rule",
+        "operationId": "AddNamedPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/add_policy": {
+      "post": {
+        "description": "Add new policy rule",
+        "operationId": "AddPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/enforce": {
+      "post": {
+        "description": "Check permissions for user on endpoint with specific method",
+        "operationId": "Enforce",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_actions": {
+      "get": {
+        "description": "Get all actions",
+        "operationId": "GetAllActions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_named_actions": {
+      "get": {
+        "description": "Get all named actions",
+        "operationId": "GetAllNamedActions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_named_objects": {
+      "get": {
+        "description": "Get all named objects",
+        "operationId": "GetAllNamedObjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_named_roles": {
+      "get": {
+        "description": "Get all named roles",
+        "operationId": "GetAllNamedRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_named_subjects": {
+      "get": {
+        "description": "Get all named subjects",
+        "operationId": "GetAllNamedSubjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_objects": {
+      "get": {
+        "description": "Get all objects",
+        "operationId": "GetAllObjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_roles": {
+      "get": {
+        "description": "Get all roles",
+        "operationId": "GetAllRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_all_subjects": {
+      "get": {
+        "description": "Get all subjects",
+        "operationId": "GetAllSubjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArrayReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_filtered_grouping_policy": {
+      "get": {
+        "description": "Get filtered grouping policy",
+        "operationId": "GetFilteredGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_filtered_named_grouping_policy": {
+      "get": {
+        "description": "Get filtered named grouping policy",
+        "operationId": "GetFilteredNamedGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_filtered_named_policy": {
+      "get": {
+        "description": "Get filtered named policy",
+        "operationId": "GetFilteredNamedPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_filtered_policy": {
+      "get": {
+        "description": "Get filtered policy",
+        "operationId": "GetFilteredPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_grouping_policy": {
+      "get": {
+        "description": "Get grouping policy",
+        "operationId": "GetGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_implicit_permissions_for_user": {
+      "get": {
+        "description": "Get implicit permissions for user",
+        "operationId": "GetImplicitPermissionsForUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "permissions",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_named_grouping_policy": {
+      "get": {
+        "description": "Get named grouping policy",
+        "operationId": "GetNamedGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_named_policy": {
+      "get": {
+        "description": "Get named policy",
+        "operationId": "GetNamedPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/get_policy": {
+      "get": {
+        "description": "Get policy",
+        "operationId": "GetPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbArray2DReply"
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/has_grouping_policy": {
+      "get": {
+        "description": "Has grouping policy",
+        "operationId": "HasGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/has_named_grouping_policy": {
+      "get": {
+        "description": "Has named grouping policy",
+        "operationId": "HasNamedGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/has_named_policy": {
+      "get": {
+        "description": "Has named policy",
+        "operationId": "HasNamedPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/has_policy": {
+      "get": {
+        "description": "Has policy",
+        "operationId": "HasPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/casbinpbBoolReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/load_policy": {
+      "get": {
+        "description": "Load Casbin Policy",
+        "operationId": "LoadPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_filtered_grouping_policy": {
+      "delete": {
+        "description": "Remove filtered grouping policy",
+        "operationId": "RemoveFilteredGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_filtered_named_grouping_policy": {
+      "delete": {
+        "description": "Remove filtered named grouping policy",
+        "operationId": "RemoveFilteredNamedGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_filtered_named_policy": {
+      "delete": {
+        "description": "Remove filtered named policy rule",
+        "operationId": "RemoveFilteredNamedPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_filtered_policy": {
+      "delete": {
+        "description": "Remove filtered policy rule",
+        "operationId": "RemoveFilteredPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fieldIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fieldValues",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_grouping_policy": {
+      "delete": {
+        "description": "Remove grouping policy",
+        "operationId": "RemoveGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_named_grouping_policy": {
+      "delete": {
+        "description": "Remove named grouping policy",
+        "operationId": "RemoveNamedGroupingPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_named_policy": {
+      "delete": {
+        "description": "Remove named policy rule",
+        "operationId": "RemoveNamedPolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/remove_policy": {
+      "delete": {
+        "description": "Remove policy rule",
+        "operationId": "RemovePolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pType",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Casbin"
+        ]
+      }
+    },
+    "/casbin/save_policy": {
+      "put": {
+        "description": "Save Casbin Policy",
+        "operationId": "SavePolicy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "tags": [
+          "Casbin"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Array2DReplyd": {
+      "type": "object",
+      "properties": {
+        "d1": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "casbinpbArray2DReply": {
+      "type": "object",
+      "properties": {
+        "d2": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Array2DReplyd"
+          }
+        }
+      }
+    },
+    "casbinpbArrayReply": {
+      "type": "object",
+      "properties": {
+        "array": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "casbinpbBoolReply": {
+      "type": "object",
+      "properties": {
+        "res": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    }
+  }
+}

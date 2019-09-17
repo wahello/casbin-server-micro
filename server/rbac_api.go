@@ -17,6 +17,7 @@ package server
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	casbinpb "github.com/paysuper/casbin-server/casbinpb"
 )
 
@@ -113,7 +114,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *casbinpb.UserRoleRequest, 
 }
 
 // DeleteRole deletes a role.
-func (s *Server) DeleteRole(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *casbinpb.EmptyReply) error {
+func (s *Server) DeleteRole(ctx context.Context, req *casbinpb.UserRoleRequest, rsp *empty.Empty) error {
 	// remove role, if it not exist not fatal
 	_, err := s.enf.RemoveFilteredGroupingPolicy(1, req.Role)
 	if err != nil {
